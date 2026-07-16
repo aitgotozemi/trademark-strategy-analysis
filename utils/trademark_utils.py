@@ -24,6 +24,22 @@ def parse_filing_date(text: str) -> date | None:
     return date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
 
 
+def year_like_patterns(years) -> list[str]:
+    """西暦年のリストから、DB上の filing-date 文字列に対する SQL LIKE パターンを生成する。
+
+    filing-date は '令和２年３月１９日（２０２０．３．１９）' のように、
+    西暦年が全角数字＋全角括弧＋全角ピリオドで括弧内に入っている。
+    そのため西暦を全角に変換し '%（YYYY．%' の形の LIKE パターンを作る。
+    """
+    patterns = []
+    for year in years:
+        fullwidth_year = str(year).translate(
+            str.maketrans('0123456789', '０１２３４５６７８９')
+        )
+        patterns.append(f'%（{fullwidth_year}．%')
+    return patterns
+
+
 def extract_classes(text: str) -> list[int]:
     """指定商品・役務文字列から区分番号（整数）のリストを返す。
 

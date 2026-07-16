@@ -1,2 +1,5 @@
 .env
 docs/trademark_db.html
+output/
+__pycache__/
+*.pyc
